@@ -1,0 +1,83 @@
+{
+    "_version": "1.58.0",
+    "sap.app": {
+        "id": "upload.system",
+        "_version": "1.1.0",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "1.0.0"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "tags": {
+            "keywords": [
+                "{{<keyword1>}}",
+                "{{<keyword2>}}"
+            ]
+        }
+    },
+    "sap.ui5": {
+        "resources": {
+            "css": [
+                {
+                    "uri": "css/styles.css"
+                }
+            ]
+        },
+        "rootView": {
+            "viewName": "upload.system.view.App",
+            "type": "XML"
+        },
+
+        "routing": {
+
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "viewType": "XML",
+                "viewPath": "upload.system.view",
+                "controlId": "app",
+                "controlAggregation": "pages",
+                "async": true
+            },
+            "routes": [
+                {
+                    "pattern": "",
+                    "name": "login",
+                    "target": "login"
+                },
+
+                {
+                    "pattern": "dashboard",
+                    "name": "dashboard",
+                    "target": "dashboard"
+                }
+            ],
+            "targets": {
+                "login": {
+                    "viewName": "Login",
+                    "viewLevel": 1
+                },
+                
+                "dashboard": {
+                    "viewName": "Dashboard",
+                    "viewLevel": 2
+                }
+            }
+        },
+        
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "upload.system.i18n.i18n",
+                    "supportedLocales": [
+                        ""
+                    ],
+                    "fallbackLocale": ""
+                },
+                "uri": "<uriRelativeToManifest>"
+            }
+        }
+    }
+}

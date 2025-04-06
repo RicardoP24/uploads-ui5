@@ -1,0 +1,4 @@
+O autoloading no PHP (especialmente quando configurado com o Composer) funciona de maneira que as classes 
+só são carregadas quando são realmente necessárias, ou seja, no momento em que você tenta instanciá-las ou acessá-las.
+ Isso significa que o PHP não carrega todas as classes de uma vez, 
+mas somente aquelas que são usadas no código, o que melhora o desempenho e economiza recursos.

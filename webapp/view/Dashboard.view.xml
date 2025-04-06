@@ -1,0 +1,80 @@
+<mvc:View
+    controllerName="upload.system.controller.Dashboard"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:u="sap.ui.unified"
+    displayBlock="true"
+>
+    <VBox class="sapUiSmallMargin">
+        <items>
+            <u:FileUploader
+                id="fileUploader"
+                name="myFileUpload"
+                uploadUrl=""
+                placeholder="Choose a file for upload..."
+                fileType="jpg,png,pdf,docx"
+                width="100%"
+                multiple="true"
+                change="onFileSelected"
+                uploadComplete="onUploadComplete"
+            />
+
+            <Button
+                text="Upload"
+                press="onUploadPress"
+                icon="sap-icon://upload-to-cloud"
+                class="sapUiSmallMarginTop"
+            />
+
+            <Table
+                id="uploadTable"
+                class="sapUiSmallMarginTop"
+                inset="false"
+                items="{/files}"
+            >
+                <columns>
+                    <Column>
+                        <Text text="File Name" />
+                    </Column>
+                    <Column>
+                        <Text text="Size (KB)" />
+                    </Column>
+                    <Column>
+                        <Text text="Action" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{file_name}" />
+                            <Text text="{file_size}" />
+                            <HBox>
+                                <items>
+                                    <Button
+                                        icon="sap-icon://show"
+                                        press="onViewPress"
+                                        tooltip="View"
+                                        class="sapUiTinyMarginEnd"
+                                    />
+                                    <Button
+                                        icon="sap-icon://download"
+                                        press="onDownloadPress"
+                                        tooltip="Download"
+                                        class="sapUiTinyMarginEnd"
+                                    />
+                                    <Button
+                                        icon="sap-icon://delete"
+                                        press="onDeletePress"
+                                        type="Reject"
+                                        tooltip="Delete"
+                                        class="sapUiTinyMarginEnd"
+                                    />
+                                </items>
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </items>
+    </VBox>
+</mvc:View>

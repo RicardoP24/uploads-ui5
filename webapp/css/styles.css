@@ -1,0 +1,25 @@
+ .vbox-Login{
+    height: 85%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+ }
+
+ .myTitle-login{
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #0070f3;
+    text-align: center;
+}
+
+.home-content{
+    height: 85%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+ }

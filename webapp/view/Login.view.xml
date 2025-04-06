@@ -1,0 +1,17 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    controllerName="upload.system.controller.Login">
+    
+        <Page title="Login">
+            <content>
+                <VBox  class="vbox-Login sapUiSmallMarginTop"  >
+                    <Text text="Bem-vindo ao Sistema" class="myTitle-login"/>
+                    <Input id="inputUser" placeholder="Usuário" width="100%" />
+                    <Input id="inputPassword" type="Password" placeholder="Senha" width="100%" />
+                    <Button text="Login" type="Emphasized" press="onLogin" />
+                </VBox>
+            </content>
+        </Page>
+
+</mvc:View>
