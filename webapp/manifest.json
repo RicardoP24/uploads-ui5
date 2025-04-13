@@ -51,6 +51,11 @@
                     "pattern": "dashboard",
                     "name": "dashboard",
                     "target": "dashboard"
+                },
+                {
+                    "pattern": "test",
+                    "name": "test",
+                    "target": "test"
                 }
             ],
             "targets": {
@@ -61,6 +66,10 @@
                 
                 "dashboard": {
                     "viewName": "Dashboard",
+                    "viewLevel": 2
+                },
+                "test": {
+                    "viewName": "Test",
                     "viewLevel": 2
                 }
             }

@@ -31,7 +31,7 @@ sap.ui.define([
                 userModel.setProperty("/isLoggedIn",true);
                 userModel.setProperty("/data",data.user);
 
-                oRouter.navTo("dashboard"); // Navega para a tela Home
+                oRouter.navTo("test"); // Navega para a tela Home
 
 
             } else {

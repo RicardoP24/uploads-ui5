@@ -15,21 +15,18 @@ class Files {
     }
 
     // Create a new file record
-    public function save($userId, $fileName, $fileType, $fileSize, $storagePath, $downloadUrl) {
+    public function save($file) {
         try {
-            $stmt = $this->conn->prepare("INSERT INTO " . $this->table . "
-                (user_id, file_name, file_type, file_size, storage_path, download_url)
-                VALUES (:user_id, :file_name, :file_type, :file_size, :storage_path, :download_url)");
+            $uploadDir = '';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
 
-            $stmt->bindParam(':user_id', $userId);
-            $stmt->bindParam(':file_name', $fileName);
-            $stmt->bindParam(':file_type', $fileType);
-            $stmt->bindParam(':file_size', $fileSize);
-            $stmt->bindParam(':storage_path', $storagePath);
-            $stmt->bindParam(':download_url', $downloadUrl);
+            $filePath = 'C:\Users\isr-rsilva\Documents\uploads';
 
-            return $stmt->execute();
-        } catch (PDOException $e) {
+            return move_uploaded_file($file['tmp_name'], $filePath);
+
+         } catch (PDOException $e) {
             // Optional: Log $e->getMessage()
             return false;
         }

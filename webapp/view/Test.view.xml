@@ -1,0 +1,68 @@
+<mvc:View
+    height="100%"
+    controllerName="upload.system.controller.Test"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m"
+>
+    <Page
+        inset="true"
+        showHeader="false"
+    >
+        <content>
+		<Button text="Back" press="onBackPress" />
+
+            <Table
+                id="idFolderTable"
+                items="{/folders/Uploads}"
+            >
+                <columns>
+                    <Column hAlign="Center">
+                        <Text text="Name" />
+                    </Column>
+
+                    <Column hAlign="Center">
+                        <Text text="Actions" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem type="Active" press="onRowPress">
+                        <cells>
+                            <HBox
+                                justifyContent="Start"
+                                alignItems="Center"
+                                gap="5px"
+                            >
+                                <core:Icon
+                                    src="{= ${isDirectory} ? 'sap-icon://folder' : 'sap-icon://document'}"
+                                    size="1.5rem"
+                                />
+
+                                <Text text="{name}" />
+                            </HBox>
+                            <HBox
+                                justifyContent="Center"
+                                alignItems="Center"
+                                gap="5px"
+                            >
+                                <Button
+                                    icon="sap-icon://download"
+                                    press="onDownload"
+                                    tooltip="Download"
+                                    visible="{= !${isDirectory} }"
+                                />
+
+                                <Button
+                                    icon="sap-icon://delete"
+                                    press="onDelete"
+                                    type="Reject"
+                                    tooltip="Delete"
+                                />
+                            </HBox>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>

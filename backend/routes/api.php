@@ -21,13 +21,20 @@ if ($uri === "/public/index.php/api/login" && $method === "POST") {
 } else if ($uri === '/public/index.php/api/upload' && $method === 'POST') {
     $controller = new FileController();
     $controller->uploadFile();
-} else if ($uri === '/public/index.php/api/getFiles' && $method === 'POST') {
+} else if ($uri === '/public/index.php/api/getDirectories.php' && $method === 'GET') {
     $controller = new FileController();
-    $controller->getUserFiles();
+    $controller->getDirectories();
 } else if ($uri === '/public/index.php/api/deleteFile' && $method === 'POST') {
     $controller = new FileController();
     $controller->deleteFile();
-} else {
+} 
+ else if ($uri === '/public/index.php/api/download.php' && $method === 'GET') {
+    $controller = new FileController();
+    $controller->downloadFile();
+} 
+
+
+else {
     echo json_encode(value: ["success" => false, "message" => "Rota não encontrada", "uri" => $uri]);
 }
 

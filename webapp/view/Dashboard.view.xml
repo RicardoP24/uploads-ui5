@@ -6,6 +6,7 @@
     displayBlock="true"
 >
     <VBox class="sapUiSmallMargin">
+        <VBox />
         <items>
             <u:FileUploader
                 id="fileUploader"
@@ -19,62 +20,75 @@
                 uploadComplete="onUploadComplete"
             />
 
-            <Button
-                text="Upload"
-                press="onUploadPress"
-                icon="sap-icon://upload-to-cloud"
-                class="sapUiSmallMarginTop"
-            />
+            <!-- Additional Link elements can be added here -->
 
-            <Table
-                id="uploadTable"
-                class="sapUiSmallMarginTop"
-                inset="false"
-                items="{/files}"
+            <FlexBox
+                direction="Row"
+                alignItems="Center"
+                gap="5px"
             >
-                <columns>
-                    <Column>
-                        <Text text="File Name" />
-                    </Column>
-                    <Column>
-                        <Text text="Size (KB)" />
-                    </Column>
-                    <Column>
-                        <Text text="Action" />
-                    </Column>
-                </columns>
-                <items>
-                    <ColumnListItem>
-                        <cells>
-                            <Text text="{file_name}" />
-                            <Text text="{file_size}" />
-                            <HBox>
-                                <items>
-                                    <Button
-                                        icon="sap-icon://show"
-                                        press="onViewPress"
-                                        tooltip="View"
-                                        class="sapUiTinyMarginEnd"
-                                    />
-                                    <Button
-                                        icon="sap-icon://download"
-                                        press="onDownloadPress"
-                                        tooltip="Download"
-                                        class="sapUiTinyMarginEnd"
-                                    />
-                                    <Button
-                                        icon="sap-icon://delete"
-                                        press="onDeletePress"
-                                        type="Reject"
-                                        tooltip="Delete"
-                                        class="sapUiTinyMarginEnd"
-                                    />
-                                </items>
-                            </HBox>
-                        </cells>
-                    </ColumnListItem>
-                </items>
-            </Table>
+                <Button
+                    text="Back"
+                    press="onBackPress"
+                    visible="{= ${currentPath} !== '/items'}"
+                    class="sapUiSmallMarginTop"
+                />
+                <Button
+                    text="Upload"
+                    press="onUploadPress"
+                    icon="sap-icon://upload-to-cloud"
+                    class="sapUiSmallMarginTop"
+                />
+            </FlexBox>
+            <Text
+                id="breadcrumbs"
+                text="{/caminho/caminho}"
+                class="sapUiSmallMarginTop sapUiSmallMarginBottom"
+            />
         </items>
+        <List
+            id="directoryList"
+            items="{/folders}"
+            itemPress="onItemPress"
+            headerText="Directory Browser"
+        >
+            <StandardListItem
+                title="{name}"
+                icon="{= ${isDirectory} ? 'sap-icon://folder' : 'sap-icon://document'}"
+                type="Active"
+            />
+        </List>
+
+        <!-- <Table
+            id="directoryList"
+            items="{/folders}"
+            itemPress="onItemPress"
+        >
+            <columns>
+                <Column>
+                    <Text text="Directory Browser" />
+                </Column>
+
+                <Column>
+                    <Text text="Ações" />
+                </Column>
+            </columns>
+
+            <items>
+                <ColumnListItem>
+                    <cells>
+                        <FlexBox>
+                            <Text text="{name}" />
+                        </FlexBox>
+                        <Button
+                            text="Download"
+                            icon="sap-icon://download"
+                            press="onDownloadPress"
+                            visible="{= !${isDirectory}}"
+                        />
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table> -->
     </VBox>
 </mvc:View>

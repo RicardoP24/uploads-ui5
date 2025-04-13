@@ -5,10 +5,17 @@ sap.ui.define(
     "sap/m/MessageToast",
     "sap/m/Dialog",
     "sap/m/Button",
-    "../firebase",
     "sap/m/BusyDialog",
   ],
-  function (Controller, JSONModel, MessageToast, storage, BusyDialog, Dialog,Button) {
+  function (
+    Controller,
+    JSONModel,
+    MessageToast,
+    storage,
+    BusyDialog,
+    Dialog,
+    Button
+  ) {
     "use strict";
 
     return Controller.extend("upload.system.controller.Dashboard", {
@@ -19,13 +26,25 @@ sap.ui.define(
         });
         this.getView().setModel(oFileModel);
 
+        var oData = {
+          caminho: "C:\\Users\\isr-rsilva\\Documents\\uploads",
+        };
+        const model = new JSONModel({ folders: [], caminho: oData });
+        this.getView().setModel(model);
+
+        // Load root directories
+        this.loadFolders(
+          "C:\\Users\\isr-rsilva\\Documents\\uploads",
+          model.getData().folders
+        );
+
         this._userModel = this.getOwnerComponent().getModel("user");
-        this.onFetchUserFiles();
       },
 
       onFileSelected: function (oEvent) {
         const oFileUploader = oEvent.getSource();
         const aFiles = oFileUploader.mProperties.value;
+        //partir a string dos nomes dos ficheiros em arrays
         const result = aFiles
           .match(/"([^"]+)"/g)
           .map((s) => s.replace(/"/g, ""));
@@ -40,6 +59,7 @@ sap.ui.define(
           MessageToast.show("No file selected.");
         }
       },
+
       onViewPress: function (oEvent) {
         // Get the clicked row item
         var oItem = oEvent.getSource().getParent(); // The ColumnListItem
@@ -75,91 +95,33 @@ sap.ui.define(
           this.getView().addDependent(this._oBusyDialog);
         }
 
+        var oFormData = new FormData();
+        Array.from(aFiles).forEach(function (oFile) {
+          oFormData.append("files[]", oFile, oFile.name);
+        });
+
         this._oBusyDialog.open();
 
-        const storageRef = firebase.storage().ref();
-        const uploadPromises = [];
-
-        // Upload each file and push the promise
-        Array.from(aFiles).forEach((file) => {
-          const fileRef = storageRef.child("uploads/" + file.name);
-          const uploadTask = fileRef.put(file);
-
-          const p = new Promise((resolve, reject) => {
-            uploadTask.on(
-              "state_changed",
-              null,
-              (error) => reject({ file, error }),
-              () => {
-                uploadTask.snapshot.ref.getDownloadURL().then((url) => {
-                  resolve({ file, url });
-                });
-              }
-            );
+        fetch("http://localhost:8000/public/index.php/api/upload", {
+          method: "POST",
+          body: oFormData,
+        })
+          .then((response) => {
+            this._oBusyDialog.close();
+            if (!response.ok) {
+              throw new Error("Upload failed with status: " + response.status);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            sap.m.MessageToast.show("File uploaded successfully.");
+            // Additional success handling if needed
+          })
+          .catch((error) => {
+            this._oBusyDialog.close();
+            sap.m.MessageToast.show("File upload failed: " + error.message);
+            // Additional error handling if needed
           });
-
-          uploadPromises.push(p);
-        });
-
-        // Handle all uploads
-        Promise.allSettled(uploadPromises).then((results) => {
-          // ✅ Close the BusyDialog after all uploads are finished
-          this._oBusyDialog.close();
-
-          const success = results.filter((r) => r.status === "fulfilled");
-          const failed = results.filter((r) => r.status === "rejected");
-
-          if (success.length > 0) {
-            sap.m.MessageToast.show(
-              success.length + " file(s) uploaded successfully."
-            );
-            success.forEach((result) => {
-              const { file, url } = result.value;
-
-              // Prepare data for the backend API
-              const fileMetadata = {
-                userId: this._userModel.getProperty("/data/id"), // Example userId, replace with actual userId
-                fileName: file.name,
-                fileSize: file.size,
-                fileType: file.type,
-                storagePath: "uploads/" + file.name, // Path in Firebase Storage
-                download_url: url, // URL of the uploaded file
-              };
-
-              // Make the fetch request to backend to save file metadata
-              fetch("http://localhost:8000/public/index.php/api/upload", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(fileMetadata),
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  if (data.success) {
-                    this.onFetchUserFiles();
-
-                    console.log("File metadata saved successfully:", data);
-                  } else {
-                    console.error(
-                      "Failed to save file metadata:",
-                      data.message
-                    );
-                  }
-                })
-                .catch((error) => {
-                  console.error("Error in sending metadata to backend:", error);
-                });
-            });
-          }
-
-          if (failed.length > 0) {
-            console.error("Some uploads failed:", failed);
-            sap.m.MessageBox.error(
-              failed.length + " file(s) failed to upload."
-            );
-          }
-        });
       },
 
       onUploadComplete: function () {
@@ -167,152 +129,154 @@ sap.ui.define(
         MessageToast.show("Upload complete");
       },
 
-      onFetchUserFiles: function () {
-        // Get the userId from the model or session (as an example)
-        var userId = this.getOwnerComponent()
-          .getModel("user")
-          .getProperty("/data/id");
-
-        if (!userId) {
-          MessageToast.show("User ID is missing.");
-          return;
-        }
-
-        // Prepare the request data
-        var requestData = {
-          userId: userId,
-        };
-
-        // Perform the fetch request to get user files
-        fetch("http://localhost:8000/public/index.php/api/getFiles", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData), // Convert the request data to JSON
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Failed to fetch files.");
-            }
-            return response.json();
-          })
-          .then((data) => {
-            // Handle successful response
-            if (data.success) {
-              MessageToast.show(data.files.length + " file(s) found.");
-              console.log("User files:", data.files);
-              this.getView().getModel().setProperty("/files", data.files);
-              // You can update your UI with the files here
-            } else {
-              MessageToast.show(data.message || "No files found.");
-            }
-          })
-          .catch((error) => {
-            // Handle any errors that occur during the fetch
-            MessageToast.show("Error: " + error.message);
-          });
-      },
-
       onDeletePress: function (oEvent) {
         const oItem = oEvent.getSource().getParent().getParent(); // Get the ColumnListItem
         const oContext = oItem.getBindingContext();
         const file = oContext.getObject();
 
-        const fileMetadata = {
-          fileId: file.id,
-          userId: this._userModel.getProperty("/data/id"), // Example userId, replace with actual userId
-          fileName: file.file_name,
-          fileSize: file.file_size,
-          fileType: file.file_type,
-          storagePath: file.storage_path, // Path in Firebase Storage
-          download_url: file.download_url, // URL of the uploaded file
-        };
-
         if (!file) {
           MessageToast.show("Missing file information.");
           return;
         }
-
-              // Show a busy dialog during the deletion process
-              var oBusyDialog = new sap.m.BusyDialog({
-                text: "Deleting file, please wait...",
-              });
-              this.getView().addDependent(oBusyDialog);
-              oBusyDialog.open();
-              var storageRef = firebase.storage().ref();
-              var fileRef = storageRef.child(fileMetadata.storagePath);
-
-              fileRef
-                .delete()
-                .then(function () {
-                  // Delete metadata from backend
-                  return fetch(
-                    "http://localhost:8000/public/index.php/api/deleteFile",
-                    {
-                      method: "POST",
-                      body: JSON.stringify(fileMetadata), // Pass the fileId in the request body
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                    }
-                  );
-                })
-                .then(function (response) {
-                  if (!response.ok) throw new Error("Backend deletion failed.");
-                  return response.json();
-                })
-                .then(
-                  function (data) {
-                    if (data.success) {
-                      // Remove item from model
-                      var oModel = this.getView().getModel();
-                      var aFiles = oModel.getProperty("/files") || [];
-                      const fileId=data.fileId
-
-                      aFiles = aFiles.filter(function (file) {
-                        return file.id !== fileId;
-                      });
-                      oModel.setProperty("/files", aFiles);
-
-                      MessageToast.show("File deleted successfully.");
-                    } else {
-                      throw new Error(
-                        data.message || "Failed to delete file metadata."
-                      );
-                    }
-                  }.bind(this)
-                )
-                .catch(function (error) {
-                  console.error("Delete error:", error);
-                })
-                .finally(function () {
-                  oBusyDialog.close();
-                });
-            
-
-
-
       },
 
-      onDownloadPress: function(oEvent){
-        const oItem = oEvent.getSource().getParent().getParent(); // Get the ColumnListItem
-        const oContext = oItem.getBindingContext();
-        const file = oContext.getObject();
+      loadFolders: function (path, targetArray) {
+        fetch(
+          "http://localhost:8000/public/index.php/api/getDirectories.php?path=" +
+            encodeURIComponent(path)
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            data.forEach((item) => targetArray.push(item));
+            this.getView().getModel().refresh(true);
+          });
+      },
 
-        fetch(file.download_url)
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.target="_blank"
-            a.download = fileName;
-            a.click();
-            window.URL.revokeObjectURL(url);
+      onItemPress: function (oEvent) {
+ 
+        var oItem = oEvent.getParameter("listItem");
+        var oContext = oItem.getBindingContext();
+        var oData = oContext.getObject();
+
+        if (oData.isDirectory) {
+          // Update the binding of the List to show the contents of the selected folder
+          var oList = this.byId("directoryList");
+          oList.bindItems({
+            path: oContext.getPath() + "/children",
+            template: oItem.clone(),
+          });
+
+          this.addFolderBreadcrumbs(oData.name);
+        } else {
+          // Handle file selection (e.g., open the file or show details)
+          sap.m.MessageToast.show("Selected file: " + oData.name);
+        }
+      },
+
+      onBackPress: function () {
+        var breadcrumb = this.getView().byId("breadcrumbs");
+
+        if (
+          breadcrumb.getText() == "C:\\Users\\isr-rsilva\\Documents\\uploads"
+        ) {
+          return;
+        }
+
+        var oList = this.byId("directoryList");
+        var sCurrentPath = oList.getBinding("items").getPath();
+
+        // Remove the last two segments to navigate up two levels
+        var sParentPath = sCurrentPath.substring(
+          0,
+          sCurrentPath.lastIndexOf("/", sCurrentPath.lastIndexOf("/") - 1)
+        );
+
+        // Bind the list to the new parent path
+        oList.bindItems({
+          path: sParentPath,
+          template: oList.getBindingInfo("items").template.clone(),
+        });
+
+        this.removeFolderBreadcrumbs();
+      },
+
+      onDownloadPress: function (oEvent) {
+        var oItem = oEvent.getParameter("listItem");
+        var oContext = oItem.getBindingContext();
+        var oData = oContext.getObject();
+        // Construct the URL to the server-side script that serves the file
+        const url = `http://localhost:8000/public/index.php/api/download.php?filePath=${encodeURIComponent(
+          filePath
+        )}`;
+
+        fetch(url, {
+          method: "GET",
+          headers: {
+            // Add any necessary headers here
+          },
         })
-        .catch(error => console.error('Error downloading the file:', error));
-      }
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                `Server responded with status ${response.status}`
+              );
+            }
+            // Extract the filename from the Content-Disposition header
+            const disposition = response.headers.get("Content-Disposition");
+            let filename = "downloaded_file";
+            if (disposition && disposition.indexOf("attachment") !== -1) {
+              const matches = /filename="([^"]*)"/.exec(disposition);
+              if (matches != null && matches[1]) filename = matches[1];
+            }
+            return response.blob().then((blob) => ({ filename, blob }));
+          })
+          .then(({ filename, blob }) => {
+            // Create a link element
+            const link = document.createElement("a");
+            // Create a URL for the Blob and set it as the href attribute
+            const url = window.URL.createObjectURL(blob);
+            link.href = url;
+            // Set the download attribute with the filename
+            link.download = filename;
+            // Append the link to the body
+            document.body.appendChild(link);
+            // Programmatically click the link to trigger the download
+            link.click();
+            // Remove the link from the document
+            document.body.removeChild(link);
+            // Release the Blob URL
+            window.URL.revokeObjectURL(url);
+          })
+          .catch((error) => {
+            console.error("Error downloading the file:", error);
+          });
+      },
+
+      addFolderBreadcrumbs: function (foldername) {
+        // Obtenha o componente Text pelo ID
+        var breadcrumb = this.getView().byId("breadcrumbs");
+        if (breadcrumb) {
+          // Defina o novo texto
+          breadcrumb.setText(`${breadcrumb.getText()}\\${foldername}`);
+        } else {
+          console.error("Componente 'Text' não encontrado.");
+        }
+      },
+
+      removeFolderBreadcrumbs: function () {
+        // Obtenha o componente Text pelo ID
+        var breadcrumb = this.getView().byId("breadcrumbs");
+        if (breadcrumb) {
+          // Defina o novo texto
+          breadcrumb.setText(
+            breadcrumb
+              .getText()
+              .substring(0, breadcrumb.getText().lastIndexOf("\\"))
+          );
+        } else {
+          console.error("Componente 'Text' não encontrado.");
+        }
+      },
     });
   }
 );

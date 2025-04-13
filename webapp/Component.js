@@ -22,7 +22,10 @@ sap.ui.define(
         this.setModel(user, "user");
 
         this.getRouter().initialize();
+    
       },
+ 
+ 
     });
   }
 );
