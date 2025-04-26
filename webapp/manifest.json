@@ -48,11 +48,6 @@
                 },
 
                 {
-                    "pattern": "dashboard",
-                    "name": "dashboard",
-                    "target": "dashboard"
-                },
-                {
                     "pattern": "test",
                     "name": "test",
                     "target": "test"
@@ -64,10 +59,6 @@
                     "viewLevel": 1
                 },
                 
-                "dashboard": {
-                    "viewName": "Dashboard",
-                    "viewLevel": 2
-                },
                 "test": {
                     "viewName": "Test",
                     "viewLevel": 2

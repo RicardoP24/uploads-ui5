@@ -3,6 +3,7 @@
     controllerName="upload.system.controller.Test"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
+    xmlns:u="sap.ui.unified"
     xmlns="sap.m"
 >
     <Page
@@ -10,11 +11,82 @@
         showHeader="false"
     >
         <content>
-		<Button text="Back" press="onBackPress" />
+            <u:FileUploader
+                id="fileUploader"
+                name="myFileUpload"
+                uploadUrl=""
+                placeholder="Choose a file for upload..."
+                fileType="jpg,png,pdf,docx,php"
+                width="100%"
+                multiple="true"
+                change="onFileSelected"
+                uploadComplete="onUploadComplete"
+            />
 
+                <FlexBox
+                    direction="Row"
+                    alignItems="Center"
+                    gap="5px"
+                >
+                    <Button
+                        text="Back"
+                        press="onBackPress"
+                        visible="{= ${currentPath} !== '/items'}"
+                        class="sapUiSmallMarginTop"
+                    />
+                    <Button
+                        text="Upload"
+                        press="onUploadPress"
+                        icon="sap-icon://upload-to-cloud"
+                        class="sapUiSmallMarginTop"
+                    />
+
+                    <Label
+                        text="Check Errors:"
+                        labelFor="toggleSwitch"
+                    />
+                    <Switch
+                        id="toggleSwitch"
+                        state="{/systemActive}"
+                        customTextOn="ON"
+                        customTextOff="OFF"
+                        change="onToggleChange"
+                    />
+                </FlexBox>
+            <Toolbar>
+                <ToolbarSpacer />
+
+                <!-- Additional Link elements can be added here -->
+                <!-- Selected Items Counter -->
+                <Text
+                    id="idSelectionCounter"
+                    text="{= ${viewModel>/selectedCount} > 0 ? ${viewModel>/selectedCount} + ' selected' : '' }"
+                    visible="{viewModel>/multiSelect}"
+                    class="sapUiSmallMarginEnd"
+                />
+                <Button
+                    id="idDeleteSelectedBtn"
+                    icon="sap-icon://delete"
+                    text="Delete"
+                    type="Reject"
+                    press="onDeleteMultipleFiles"
+                    visible="{viewModel>/multiSelect}"
+                    enabled="{= ${viewModel>/selectedCount} > 0 }"
+                />
+                <ToggleButton
+                    id="idToggleSelectMode"
+                    icon="sap-icon://multi-select"
+                    pressed="{viewModel>/multiSelect}"
+                    text="{= ${viewModel>/multiSelect} ? 'Multi-Select' : 'Single-Select' }"
+                    press="onToggleSelectMode"
+                    tooltip="Toggle selection mode"
+                />
+            </Toolbar>
             <Table
                 id="idFolderTable"
                 items="{/folders/Uploads}"
+                mode="{= ${viewModel>/multiSelect} ? 'MultiSelect' : 'SingleSelectMaster'}"
+                selectionChange="onSelectionChangeTable"
             >
                 <columns>
                     <Column hAlign="Center">
@@ -26,7 +98,10 @@
                     </Column>
                 </columns>
                 <items>
-                    <ColumnListItem type="Active" press="onRowPress">
+                    <ColumnListItem
+                        type="Active"
+                        press="onRowPress"
+                    >
                         <cells>
                             <HBox
                                 justifyContent="Start"
@@ -47,9 +122,9 @@
                             >
                                 <Button
                                     icon="sap-icon://download"
-                                    press="onDownload"
+                                    press="onDownloadPress"
                                     tooltip="Download"
-                                    visible="{= !${isDirectory} }"
+                                    visible="{=!${isDirectory} }"
                                 />
 
                                 <Button
@@ -57,6 +132,7 @@
                                     press="onDelete"
                                     type="Reject"
                                     tooltip="Delete"
+                                    visible="{=!${isDirectory} }"
                                 />
                             </HBox>
                         </cells>
