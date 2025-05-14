@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Table
+        id="idListOfCodes"
+        items="{/Codes}"
+        mode="SingleSelectMaster"
+        itemPress=".onRowPress"
+    >
+ 
+        <columns>
+            <Column hAlign="Center">
+                <Text text="Code" />
+            </Column>
+
+            <Column hAlign="Center">
+                <Text text="Table" />
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem
+                type="Active"
+            >
+                <cells>
+                    <HBox justifyContent="Center" alignItems="Center" gap="5px">
+                        <Text text="{code}" />
+                    </HBox>
+
+                    <HBox justifyContent="Center" alignItems="Center" gap="5px">
+                        <Text text="{table}" />
+                    </HBox>
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</core:FragmentDefinition>

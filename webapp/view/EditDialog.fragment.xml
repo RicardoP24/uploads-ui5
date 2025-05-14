@@ -1,0 +1,26 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+  <Dialog
+    id="editDialog"
+    title="Edit Entry"
+    draggable="true"
+    resizable="false"
+    contentWidth="300px"
+    contentHeight="auto"
+    stretchOnPhone="true"
+  >
+    <VBox class="sapUiSmallMargin">
+      <Label text="WPMS Code" />
+      <Input value="{/editBuffer/wpmsCode}" />
+
+      <Label text="Variable Ratio" />
+      <Input value="{/editBuffer/variableRatio}" />
+    </VBox>
+
+    <beginButton>
+      <Button text="Save" type="Emphasized" press="onEditDialogSave" />
+    </beginButton>
+    <endButton>
+      <Button text="Cancel" press="onEditDialogCancel" />
+    </endButton>
+  </Dialog>
+</core:FragmentDefinition>

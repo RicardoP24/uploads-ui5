@@ -1,0 +1,53 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Table
+        id="idCodesTable"
+        items="{/CodesTables}"
+        mode="SingleSelectMaster"
+        itemPress=".onRowPressCodeTable"
+    >
+
+        <headerToolbar>
+            <Toolbar>
+                <Button icon="sap-icon://nav-back" tooltip="Back" press="onBackPress" />
+                <ToolbarSpacer />
+                <Button icon="sap-icon://edit" tooltip="Edit" press="onEditPress" />
+                <Button icon="sap-icon://save" tooltip="Save" press="onSaveEditPress"
+                    enabled="{/isEditing}" />
+
+            </Toolbar>
+        </headerToolbar>
+        <columns>
+            <Column hAlign="Center">
+                <Text text="SAP Code" />
+            </Column>
+            <Column hAlign="Center">
+                <Text text="WPMS Code" />
+            </Column>
+            <Column hAlign="Center">
+                <Text text="Variable Ratio" />
+            </Column>
+        </columns>
+
+        <items>
+            <ColumnListItem
+                type="Active"
+            >
+                <cells>
+                    <HBox justifyContent="Start" alignItems="Center" gap="5px">
+                        <Text text="{sapCode}" />
+                    </HBox>
+                    <HBox justifyContent="Start" alignItems="Center" gap="5px">
+                        <Text text="{wpmsCode}" />
+                    </HBox>
+                    <HBox justifyContent="Start" alignItems="Center" gap="5px">
+                        <Text text="{variableRatio}" />
+                    </HBox>
+ 
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</core:FragmentDefinition>

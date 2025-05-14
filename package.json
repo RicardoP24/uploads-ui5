@@ -3,11 +3,10 @@
     "version": "1.0.0",
     "description": "The UI5 quickstart tutorial",
     "scripts": {
-        "start": "ui5 serve -o index.html",
-        "backend": "php -S localhost:8000 -t backend"
+        "start": "ui5 serve -o index.html"
     },
     "devDependencies": {
-        "@ui5/cli": "^4.0.14"
+        "@ui5/cli": "^4.0.15"
     }
-
+ 
 }

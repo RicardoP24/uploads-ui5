@@ -1,0 +1,69 @@
+<mvc:View
+    height="100%"
+    controllerName="upload.system.controller.Main"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:u="sap.ui.unified"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    xmlns:uxap="sap.uxap"
+>
+    <Page
+        inset="true"
+        showHeader="false"
+    >
+        <uxap:ObjectPageLayout id="ObjectPageLayout" showTitleInHeaderContent="true"
+            preserveHeaderStateOnScroll="false" upperCaseAnchorBar="false"
+            class="sapUiNoContentPadding sapUiNoMargin" height="50px">
+
+            <uxap:headerTitle>
+                <uxap:ObjectPageDynamicHeaderTitle>
+                    <uxap:expandedHeading>
+                        <Title text="ISRETAIL" wrapping="true" />
+                    </uxap:expandedHeading>
+                    <uxap:snappedHeading>
+                        <Title text="ISRETAIL" wrapping="true" />
+                    </uxap:snappedHeading>
+                    <uxap:expandedContent>
+                        <Text text="Interface (EVE ISRETAIL -> ECP - SAP ERP)" />
+                    </uxap:expandedContent>
+                    <uxap:snappedContent>
+                        <Text text="Interface (EVE ISRETAIL -> ECP - SAP ERP)" />
+                    </uxap:snappedContent>
+                    <uxap:actions>
+                        <Button text="Menu" icon="sap-icon://menu2"
+                            press=".onOpenMenu" type="Transparent" />
+ 
+                    </uxap:actions>
+                </uxap:ObjectPageDynamicHeaderTitle>
+            </uxap:headerTitle>
+
+      
+        </uxap:ObjectPageLayout>
+        <content>
+            <FlexBox
+                direction="Column"
+                justifyContent="Center"
+                alignItems="Center"
+                height="4rem"
+            >
+
+ 
+            </FlexBox>
+
+
+            <!-- MainView.view.xml -->
+            <VBox>
+
+                <HBox justifyContent="Center" alignItems="Center">
+                    <Text id="selectedArticleText" text="{/selectedArticleName}"
+                        class="sapUiTinyMargin" />
+                </HBox>
+                <!-- Container where fragments will load -->
+                <VBox id="fragmentContainer" />
+            </VBox>
+
+
+        </content>
+    </Page>
+</mvc:View>

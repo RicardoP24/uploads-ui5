@@ -1,0 +1,29 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+  <VBox class=" sapUiResponsiveMargin">
+
+    
+    <HBox justifyContent="Center" alignItems="Center">
+      <Text id="IdIdocss" text="IDOCS"
+        class="sapUiTinyMargin" />
+    </HBox>
+    <!-- Numeric Inputs -->
+    <Label text="De:" />
+    <Input type="Number" placeholder="0" value="{/logs/de}" />
+
+    <Label text="A:" />
+    <Input type="Number" placeholder="999999999999999" value="{/logs/a}" />
+
+    <HBox justifyContent="Center" alignItems="Center">
+      <Text id="Iddatahoratext" text="DATA / HORA"
+        class="sapUiTinyMargin" />
+    </HBox>
+
+    <!-- Date/Time Inputs -->
+    <Label text="Início:" />
+    <DateTimePicker value="{/logs/inicio}" displayFormat="medium" valueFormat="yyyy-MM-ddTHH:mm:ss" />
+
+    <Label text="Fim:" />
+    <DateTimePicker value="{/logs/fim}" displayFormat="medium" valueFormat="yyyy-MM-ddTHH:mm:ss" />
+
+  </VBox>
+</core:FragmentDefinition>
